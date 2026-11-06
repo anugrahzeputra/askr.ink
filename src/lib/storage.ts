@@ -15,7 +15,7 @@ let dbInitialized = false;
 if (DATABASE_URL) {
   pool = new Pool({
     connectionString: DATABASE_URL,
-    ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : undefined,
+    ssl: { rejectUnauthorized: false },
     max: 10,
     idleTimeoutMillis: 30000,
   });
