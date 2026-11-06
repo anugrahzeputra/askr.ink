@@ -1,36 +1,99 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# askr.ink 🔗
 
-## Getting Started
+A modern, lightning-fast, and minimalist URL shortener & shortcut application built for **askr.ink**.
 
-First, run the development server:
+Similar in speed and simplicity to intip.in or bitly, with custom alias support, instant QR code generator, click tracking, and zero-configuration local development.
+
+---
+
+## ✨ Features
+
+- **Minimalist & Clean UI**: Focused, clutter-free design optimized for both mobile and desktop.
+- **Custom Shortcut / Alias**: Support for custom vanity URLs (e.g. `askr.ink/porto` or `askr.ink/event-2026`).
+- **Auto-generated Short Slugs**: 6-character clean collision-free alphanumeric keys.
+- **Instant QR Code**: Auto-generated QR code preview with 1-click PNG download.
+- **One-Click Copy**: Instant clipboard copy with visual feedback.
+- **Quick Social Share**: Instant sharing to WhatsApp, Telegram, and X (Twitter).
+- **Device History (Local Storage)**: Keeps track of recent links created on the device without requiring a mandatory login.
+- **Click Tracking & Stats**: Tracks link visit count and last clicked timestamp.
+- **Dual-Storage Engine**:
+  - **Local Development**: Automatic file storage in `data/links.json` (zero external dependencies).
+  - **Production / Vercel**: Connect to any PostgreSQL provider (Supabase, Neon, Railway, Aiven) by setting `DATABASE_URL`.
+- **Fast 307 Redirects**: Immediate redirection without caching lag.
+
+---
+
+## 🚀 Getting Started
+
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+### 2. Run local development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🌐 Namecheap DNS Configuration for `askr.ink` (Vercel)
 
-## Learn More
+When deploying to Vercel:
 
-To learn more about Next.js, take a look at the following resources:
+1. Open **Namecheap** > **Domain List** > select **askr.ink** > **Manage**.
+2. Go to **Advanced DNS** tab.
+3. Add the following records:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Type | Host | Value | TTL |
+| :--- | :--- | :--- | :--- |
+| **A Record** | `@` | `76.76.21.21` | Automatic |
+| **CNAME Record** | `www` | `cname.vercel-dns.com.` | Automatic |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4. In your Vercel project dashboard, go to **Settings** > **Domains** > Add `askr.ink` (and `www.askr.ink`).
+5. Vercel will automatically provision a free SSL certificate.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🗄️ Database Setup for Vercel (Production)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+For persistent links on Vercel's serverless environment, create a free database on [Supabase](https://supabase.com) or [Neon](https://neon.tech):
+
+1. Copy your database connection string:
+   ```env
+   DATABASE_URL="postgresql://postgres:[PASSWORD]@[HOST]:5432/postgres?sslmode=require"
+   NEXT_PUBLIC_APP_URL="https://askr.ink"
+   ```
+2. Add these environment variables in your **Vercel Project Settings > Environment Variables**.
+3. Tables and indexes are created automatically on first run.
+
+---
+
+## 📁 Project Structure
+
+```
+askr-ink/
+├── src/
+│   ├── app/
+│   │   ├── [slug]/route.ts       # Ultra-fast 307 redirect handler
+│   │   ├── api/
+│   │   │   ├── shorten/route.ts  # Short link generation & QR
+│   │   │   ├── stats/[slug]/route.ts # Click count endpoint
+│   │   │   └── qr/route.ts       # Direct QR code PNG stream
+│   │   ├── globals.css           # Tailwind v4 styling
+│   │   ├── layout.tsx            # Root metadata & fonts
+│   │   └── page.tsx              # Clean minimalist interface
+│   ├── lib/
+│   │   ├── storage.ts            # Dual-engine storage (File / Postgres)
+│   │   └── utils.ts              # URL normalization & slug validation
+│   └── types/
+│       └── link.ts               # TypeScript data definitions
+├── data/                         # Local storage directory (auto-created)
+├── .env.example
+├── next.config.ts
+└── package.json
+```

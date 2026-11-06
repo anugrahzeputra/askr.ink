@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+/data/links.json
 
 # debug
 npm-debug.log*
